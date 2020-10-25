@@ -1,45 +1,46 @@
 # waluigi
-waluigi is a bare bones implementation of luigi, the workflow scheduler developed by spotify.
+waluigi is a simple <100 loc re-implementation of [luigi](https://github.com/spotify/luigi), the popular workflow scheduler developed by spotify. 
 
-## example
-every task is defined as a `WaluigiTask`.
+## a working example
+we have the following seqeuential pipeline: (1) add cereal, (2) add milk, (3) eat.
 
+each task is represented as a `WaluigiTask` object:
 ```python
-class FinalRecipe(WaluigiTask):
+class AddCereal(WaluigiTask):
     def requires(self):
-        return [AddGrapes()]
+        return [AddMilk()]
 
     def run(self):
-        with open("words.txt", "r") as f:
-            print(f.read()) 
+        # do something
             
     def output(self):
-        return 'letter_counts.txt'
-```
+        # do something
 
-when we execute, we call:
-```python
-F = FinalRecipe()
-F()
-```
-this kicks off `WaluigiTask`s call method, which looks like this:
-```python
-def __call__(self):
-    if len(self.requires()) > 0:
-        for parent in self.requires():
-            parent()
-    self.run()
-``` 
-it will call any `WaluigiTask` that's required. once it's done executing its parent, it will `run()` itself, which was previously defined by the user.
-```python
-class FinalRecipe(WaluigiTask):
-    # def requires(self):
-        # return [AddGrapes()]
+
+class AddMilk(WaluigiTask):
+    def requires(self):
+        return [AddMilk()]
 
     def run(self):
-        with open("words.txt", "r") as f:
-            print(f.read()) 
+        # do something
             
-    # def output(self):
-        # return 'letter_counts.txt'
+    def output(self):
+        # do something
+
+
+class Eat(WaluigiTask):
+    def requires(self):
+        return [AddMilk()]
+
+    def run(self):
+        # do something
+            
+    def output(self):
+        # do something
+```
+
+to execute, we call:
+```python
+breakfast = Eat()
+breakfast()
 ```
